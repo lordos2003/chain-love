@@ -38,7 +38,37 @@ fork = {r[1][len('refs/heads/'):]: r[0] for r in ls(FORK, 'refs/heads/*')}
 pull_head = {}                       # sha -> [PR numbers]
 for sha, ref in ls(UPSTREAM, 'refs/pull/*/head'):
     pull_head.setdefault(sha, []).append(int(ref.split('/')[2]))
-open_prs = {int(ref.split('/')[2]) for _, ref in ls(UPSTREAM, 'refs/pull/*/merge')}
+def fetch_open_prs():
+    """PR со state=open по API. refs/pull/N/merge остаются и у закрытых PR,
+    поэтому «merge-реф есть» != «PR открыт»: gh -> urllib (fallback)."""
+    import json as _json
+    try:
+        out = subprocess.run(['gh', 'api', '--paginate',
+                              'repos/Chain-Love/chain-love/pulls?state=open&per_page=100'],
+                             capture_output=True, text=True, timeout=300)
+    except FileNotFoundError:
+        out = None
+    if out is not None and out.returncode == 0:
+        nums = set()
+        for line in out.stdout.splitlines():
+            if line.strip():
+                nums |= {p['number'] for p in _json.loads(line)}
+        return nums
+    nums = set()
+    for page in range(1, 30):
+        url = (f'https://api.github.com/repos/Chain-Love/chain-love/pulls'
+               f'?state=open&per_page=100&page={page}')
+        req = urllib.request.Request(url, headers={'Accept': 'application/vnd.github+json',
+                                                   'User-Agent': 'registry-check'})
+        with urllib.request.urlopen(req, timeout=60) as resp:
+            batch = _json.load(resp)
+        nums |= {p['number'] for p in batch}
+        if len(batch) < 100:
+            break
+    return nums
+
+
+open_prs = fetch_open_prs()
 main = ls(UPSTREAM, 'refs/heads/main')[0][0]
 
 # trailer Agent: в голове каждой ветки (коммиты без него помечаются)

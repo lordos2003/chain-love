@@ -115,8 +115,51 @@ def scan_diff(diff, source):
                 taken[(cur, s, c)].append((source, d[c].strip()))
 
 
-# --- открытые PR upstream (merge-реф есть = открыт и сливается)
+
+def open_pr_numbers():
+    """Номера реально ОТКРЫТЫХ PR upstream. refs/pull/N/merge остаются и у
+    закрытых без слияния PR, поэтому «merge-реф есть» != «PR открыт»: возможны
+    закрытые PR, которые считается занявшими ячейки. gh -> urllib (fallback)."""
+    import json as _json
+    try:
+        out = subprocess.run(['gh', 'api', '--paginate',
+                              'repos/Chain-Love/chain-love/pulls?state=open&per_page=100'],
+                             capture_output=True, text=True, timeout=300)
+    except FileNotFoundError:
+        out = None
+    if out is not None and out.returncode == 0:
+        nums = set()
+        for line in out.stdout.splitlines():
+            line = line.strip()
+            if line:
+                nums |= {p['number'] for p in _json.loads(line)}
+        return nums
+    try:
+        import urllib.request as _ur
+        nums = set()
+        for page in range(1, 30):
+            url = ('https://api.github.com/repos/Chain-Love/chain-love/pulls'
+                   '?state=open&per_page=100&page=%d' % page)
+            req = _ur.Request(url, headers={'Accept': 'application/vnd.github+json',
+                                            'User-Agent': 'dup-scan'})
+            with _ur.urlopen(req, timeout=60) as resp:
+                batch = _json.load(resp)
+            nums |= {p['number'] for p in batch}
+            if len(batch) < 100:
+                break
+        return nums
+    except Exception as e:
+        print(f'не удалось получить открытые PR ({e}); '
+              'считаю открытыми все с merge-рефом', file=sys.stderr)
+        return None
+
+
+# --- открытые PR upstream (merge-реф есть = открыт И сливается; НО он есть и у закрытых
+# без слияния — дополнительно сверимся со state=open через gh/API)
 merges = {int(ref.split('/')[2]): sha for sha, ref in ls(UP, 'refs/pull/*/merge')}
+_open = open_pr_numbers()
+if _open is not None:
+    merges = {n: s for n, s in merges.items() if n in _open}
 prs = sorted(n for n in merges if n not in a.exclude_pr)
 print(f'open PR upstream: {len(merges)}; fetch merge-коммитов...', file=sys.stderr)
 for i in range(0, len(prs), 100):
