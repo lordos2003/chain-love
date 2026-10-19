@@ -24,7 +24,33 @@ from collections import defaultdict
 
 UP = 'https://github.com/Chain-Love/chain-love.git'
 FORK = 'https://github.com/lordos2003/chain-love.git'
-NETS = ['algorand', 'avalanche', 'filecoin', 'somnia']  # сети программы; --net сужает
+NETS_FALLBACK = ['algorand', 'avalanche', 'filecoin', 'somnia']
+PROGRAM_URL = 'https://raw.githubusercontent.com/lordos2003/chain-love/agent-registry/PROGRAM.json'
+
+
+def program_nets():
+    """Сети программы на сегодня из PROGRAM.json (ветка agent-registry). Сети меняются:
+    файл ведёт главный агент со слов Олега; если он старше max_age_days — предупреждение."""
+    import datetime, urllib.request
+    today = datetime.date.today().isoformat()
+    try:
+        with urllib.request.urlopen(PROGRAM_URL, timeout=30) as r:
+            prog = json.load(r)
+    except Exception as e:
+        print(f'ВНИМАНИЕ: PROGRAM.json недоступен ({e}); беру запасной список {NETS_FALLBACK}', file=sys.stderr)
+        return NETS_FALLBACK
+    nets = [n['name'] for n in prog['networks']
+            if n.get('from', '0000') <= today and today < n.get('until', '9999')]
+    age = (datetime.date.today() - datetime.date.fromisoformat(prog['updated'])).days
+    if age > prog.get('max_age_days', 7):
+        print(f'ВНИМАНИЕ: PROGRAM.json обновлён {age} дн. назад ({prog["updated"]}). Сети программы могут '
+              'измениться: уточни у Олега / в Discussion #41 до начала работы.', file=sys.stderr)
+    print(f'сети программы на {today}: {", ".join(nets)} (PROGRAM.json от {prog["updated"]}; '
+          f'не подтверждены: {", ".join(prog.get("unconfirmed", {})) or "-"})', file=sys.stderr)
+    return nets
+
+
+NETS = None  # заполняется из PROGRAM.json; --net сужает
 
 
 def git(repo, *a, check=True):
@@ -55,7 +81,7 @@ ap.add_argument('--free', action='store_true', help='напечатать сво
 ap.add_argument('--json', help='сохранить результат в JSON')
 ap.add_argument('--all-offers', action='store_true', help='показывать и офферы без листингов в сетях программы (вес 0, не оплачиваются)')
 a = ap.parse_args()
-nets = a.net or NETS
+nets = a.net or program_nets()
 slugs = set(a.slugs.split(',')) if a.slugs else None
 
 cache = os.environ.get('DUP_SCAN_CACHE') or os.path.expanduser('~/.cache/chainlove-dupscan')

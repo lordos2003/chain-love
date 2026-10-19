@@ -100,6 +100,21 @@ def agent_of(branch):
 
 
 warn = []
+# сети программы меняются: показать актуальный список и возраст PROGRAM.json
+try:
+    import json as _j, datetime as _dt
+    with urllib.request.urlopen('https://raw.githubusercontent.com/lordos2003/chain-love/agent-registry/PROGRAM.json', timeout=30) as _r:
+        _p = _j.load(_r)
+    _t = _dt.date.today().isoformat()
+    _nets = [n['name'] for n in _p['networks'] if n.get('from', '0000') <= _t < n.get('until', '9999')]
+    _age = (_dt.date.today() - _dt.date.fromisoformat(_p['updated'])).days
+    print(f'Сети программы на {_t}: {", ".join(_nets)} (PROGRAM.json от {_p["updated"]}, {_age} дн.)')
+    if _age > _p.get('max_age_days', 7):
+        print('ВНИМАНИЕ: список сетей устарел — до работы уточнить у Олега и обновить PROGRAM.json')
+        warn.append('PROGRAM.json устарел')
+except Exception as e:
+    print(f'ВНИМАНИЕ: PROGRAM.json не прочитан ({e}) — сети программы уточнить у Олега до работы')
+
 drift = []
 print(f'upstream main: {main[:7]}   открытых PR в upstream: {len(open_prs)}   веток в форке: {len(fork)}\n')
 print(f'{"ветка":32} {"head":8} {"PR (open/closed)":20} {"реестр":28} Agent (head-коммит)')
