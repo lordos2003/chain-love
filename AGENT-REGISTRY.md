@@ -102,7 +102,7 @@ Agent: <имя агента>/<id сессии или запуска>
 
 | Ветка | Область (файл.колонка, сеть) | Агент / сессия | Заявлено (МСК) | Статус |
 |---|---|---|---|---|
-| `fill-oracles-cells` | oracles offers: availableApis, monitoringAndAnalytics, additionalFeatures, dataTypes, sdk (pyth-pro) + availableApis (scry-protocol), 6 ячеек — свободные по dup_scan | ZCode | 2026-10-19 18:06 | claimed |
+| `fill-oracles-cells` | 0a83ec1 | - | ready | oracles offers: availableApis, monitoringAndAnalytics, additionalFeatures, dataTypes, sdk (pyth-pro) + availableApis (scry-protocol), 6 ячеек — значения из официальных доков (docs.pyth.network/price-feeds/pro, docs.scry.finance), валидаторы OK | ZCode (заявка 18:06) |
 
 ## 9. Журнал изменений реестра
 
