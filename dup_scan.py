@@ -14,7 +14,9 @@
 (diff от общей базы с upstream main). Смотрятся offers/<cat>.csv,
 listings/specific-networks/<net>/<cat>.csv и listings/all-networks/<cat>.csv.
 
---free печатает офферы, где ячейка пуста в main и не занята никем (без учёта весов сетей).
+--free печатает офферы, где ячейка пуста в main (в оффере и во всех его листингах сетей программы)
+и не занята никем, с весом = число сетей программы, ссылающихся на оффер. Офферы с весом 0
+(нет листинга ни в одной оплачиваемой сети) по умолчанию скрыты: за них не платят (--all-offers покажет).
 Кэш git: $DUP_SCAN_CACHE или ~/.cache/chainlove-dupscan (повторный запуск быстрее).
 """
 import argparse, csv, io, json, os, subprocess, sys
@@ -51,6 +53,7 @@ ap.add_argument('--exclude-branch', action='append', default=[], help='своя 
 ap.add_argument('--no-fork', action='store_true', help='не смотреть ветки форка')
 ap.add_argument('--free', action='store_true', help='напечатать свободные ячейки офферов')
 ap.add_argument('--json', help='сохранить результат в JSON')
+ap.add_argument('--all-offers', action='store_true', help='показывать и офферы без листингов в сетях программы (вес 0, не оплачиваются)')
 a = ap.parse_args()
 nets = a.net or NETS
 slugs = set(a.slugs.split(',')) if a.slugs else None
@@ -107,6 +110,8 @@ def scan_diff(diff, source):
             continue
         d = dict(zip(hdr[cur], r))
         s = d[hdr[cur][0]]
+        if s == hdr[cur][0]:
+            continue                      # строка заголовка в diff
         if slugs and s not in slugs:
             continue
         base = main_val.get((cur, s), {})
@@ -201,21 +206,51 @@ for (p, s, c), lst in sorted(taken.items()):
     srcs = '; '.join(f'{src}: {v[:50]}' for src, v in lst)
     print(f'ЗАНЯТО  {s:40} {c:24} [{where}]  {srcs}')
 
-free = []
+# --- вес оффера: сети программы, листинги которых ссылаются на оффер (all-networks = все)
+refs = defaultdict(set)            # slug -> {net}
+lst_vals = defaultdict(list)       # slug -> [row dict листинга]
+for (p, s), d in main_val.items():
+    if p == off_path:
+        continue
+    o = d.get('offer', '')
+    if not o.startswith('!offer:'):
+        continue
+    slug = o[len('!offer:'):]
+    net = None if '/all-networks/' in p else p.split('/')[2]
+    refs[slug].update(nets if net is None else [net])
+    lst_vals[slug].append(d)
+
+
+def weight(slug):
+    return len(refs.get(slug, ()))
+
+
+free, hidden0 = [], 0
 if a.free:
     for (p, s), d in sorted(main_val.items()):
         if p != off_path or (slugs and s not in slugs):
             continue
+        w = weight(s)
         for c in a.col:
-            if not d.get(c, '').strip() and (p, s, c) not in taken:
-                free.append((s, c))
-    print(f'\nСвободно в офферах (пусто в main и не занято): {len(free)}')
-    for s, c in free:
-        print(f'  {s:40} {c}')
+            if d.get(c, '').strip() or (p, s, c) in taken:
+                continue
+            if any(l.get(c, '').strip() for l in lst_vals.get(s, [])):
+                continue                      # листинг переопределяет ячейку
+            if w == 0 and not a.all_offers:
+                hidden0 += 1
+                continue
+            free.append((s, c, w))
+    tot = sum(w for _, _, w in free)
+    print(f'\nСвободно в офферах (пусто в main и листингах, не занято): {len(free)} ячеек, '
+          f'эффективных (× сети программы) {tot}, ≈ {tot * 0.06:.2f} USDC до коэффициента')
+    if hidden0:
+        print(f'(скрыто {hidden0} ячеек офферов без листингов в сетях программы: вес 0, не оплачиваются; --all-offers покажет)')
+    for s, c, w in sorted(free, key=lambda x: (-x[2], x[0])):
+        print(f'  {s:40} {c:24} вес {w} ({",".join(sorted(refs.get(s, ()))) or "-"})')
 
 if a.json:
     json.dump({'main': main_sha, 'cat': a.cat, 'cols': a.col, 'nets': nets,
                'taken': [{'file': p, 'slug': s, 'col': c, 'by': [x[0] for x in l], 'values': [x[1] for x in l]}
                          for (p, s, c), l in sorted(taken.items())],
-               'free': [{'slug': s, 'col': c} for s, c in free]},
+               'free': [{'slug': s, 'col': c, 'weight': w} for s, c, w in free]},
               open(a.json, 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
