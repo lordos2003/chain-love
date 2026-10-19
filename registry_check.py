@@ -7,7 +7,7 @@
 
 Код выхода: 0 = расхождений нет, 1 = есть расхождения (разберись до начала работы).
 """
-import re, subprocess, sys, urllib.request
+import os, re, subprocess, sys, urllib.request
 
 FORK = 'https://github.com/lordos2003/chain-love.git'
 UPSTREAM = 'https://github.com/Chain-Love/chain-love.git'
@@ -41,9 +41,32 @@ for sha, ref in ls(UPSTREAM, 'refs/pull/*/head'):
 open_prs = {int(ref.split('/')[2]) for _, ref in ls(UPSTREAM, 'refs/pull/*/merge')}
 main = ls(UPSTREAM, 'refs/heads/main')[0][0]
 
+# trailer Agent: в голове каждой ветки (коммиты без него помечаются)
+cache = os.environ.get('REGISTRY_CACHE') or os.path.expanduser('~/.cache/chainlove-registry')
+if not os.path.isdir(os.path.join(cache, '.git')):
+    subprocess.run(['git', 'init', '-q', cache], check=True)
+subprocess.run(['git', '-C', cache, 'fetch', '-q', '--depth=1', '--filter=tree:0', FORK,
+                '+refs/heads/*:refs/fork/*'], capture_output=True)
+
+
+def agent_of(branch):
+    fmt = '%(trailers:key=Agent,valueonly,separator=%x2C)|%(trailers:key=Claude-Session,valueonly,separator=%x2C)'
+    r = subprocess.run(['git', '-C', cache, 'log', '-1', f'--format={fmt}', f'refs/fork/{branch}'],
+                       capture_output=True, text=True)
+    if r.returncode:
+        return '?'
+    ag, cs = (r.stdout.strip().split('|') + [''])[:2]
+    if ag.strip():
+        return ag.strip()
+    if cs.strip():
+        return 'агент не указан (есть Claude-Session ' + cs.strip().rsplit('/', 1)[-1][-8:] + ')'
+    return 'агент не указан'
+
+
+warn = []
 drift = []
 print(f'upstream main: {main[:7]}   открытых PR в upstream: {len(open_prs)}   веток в форке: {len(fork)}\n')
-print(f'{"ветка":32} {"head":8} {"PR (open/closed)":24} реестр')
+print(f'{"ветка":32} {"head":8} {"PR (open/closed)":20} {"реестр":28} Agent (head-коммит)')
 for b in sorted(fork):
     if b in IGNORE:
         continue
@@ -58,11 +81,16 @@ for b in sorted(fork):
         drift.append(f'ветка {b}: head {sha[:7]} != реестр {reg[b]["sha"][:7]}')
     else:
         status = 'ok'
-    print(f'{b:32} {sha[:7]:8} {prs_s:24} {status}')
+    ag = agent_of(b)
+    if ag.startswith('агент не указан') or ag == '?':
+        warn.append(f'ветка {b}: в head-коммите нет трейлера Agent:')
+    print(f'{b:32} {sha[:7]:8} {prs_s:20} {status:28} {ag}')
 for b in sorted(reg):
     if b not in fork:
         drift.append(f'в реестре есть {b}, но ветки в форке нет (удалена/переименована?)')
 print('\n(#NNNNx = PR закрыт/слит; без x = открыт)')
+if warn:
+    print(f'\nПредупреждения (не блокируют): {len(warn)} веток без трейлера Agent: в последнем коммите.')
 if drift:
     print('\nРАСХОЖДЕНИЯ (истина = git; обнови реестр или выясни у Олега):')
     for d in drift:
