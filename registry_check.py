@@ -68,7 +68,13 @@ def fetch_open_prs():
     return nums
 
 
-open_prs = fetch_open_prs()
+try:
+    open_prs = fetch_open_prs()
+except Exception as e:   # API закрыт (например, прокси облачной сессии): запасной вариант
+    print(f'ВНИМАНИЕ: API GitHub недоступен ({e}); открытыми считаю PR с merge-рефом. '
+          'Это завышает список: merge-реф остаётся и у закрытых PR. Статус спорных PR проверь на странице PR.',
+          file=sys.stderr)
+    open_prs = {int(ref.split('/')[2]) for _, ref in ls(UPSTREAM, 'refs/pull/*/merge')}
 main = ls(UPSTREAM, 'refs/heads/main')[0][0]
 
 # trailer Agent: в голове каждой ветки (коммиты без него помечаются)
