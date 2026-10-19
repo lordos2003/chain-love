@@ -46,7 +46,7 @@ def program_nets():
         print(f'ВНИМАНИЕ: PROGRAM.json обновлён {age} дн. назад ({prog["updated"]}). Сети программы могут '
               'измениться: уточни у Олега / в Discussion #41 до начала работы.', file=sys.stderr)
     print(f'сети программы на {today}: {", ".join(nets)} (PROGRAM.json от {prog["updated"]}; '
-          f'не подтверждены: {", ".join(prog.get("unconfirmed", {})) or "-"})', file=sys.stderr)
+          f'не платят: {", ".join(prog.get("not_eligible", {})) or "-"})', file=sys.stderr)
     return nets
 
 

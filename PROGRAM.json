@@ -3,21 +3,41 @@
   "updated_by": "главный агент claude-code/session_01EzVCFG42JqmQZQcBAF3i7T",
   "max_age_days": 7,
   "sources": [
-    "https://github.com/Chain-Love/chain-love/discussions/41 (условия программы и поправки)",
-    "письмо Олегу от 2026-10-14 (Avalanche с 10.10, Somnia до 01.11, Fuse с 01.11) — непубличное, подтверждает только Олег"
+    "https://github.com/Chain-Love/chain-love/discussions/41 — список сетей в исходном посте (проверено 2026-10-19 19:10 МСК): Algorand; Filecoin; Somnia (until November 1st); Fuse (from November 1st); Avalanche (from October 10 to November 1st). Правило 02.02.2026: «only the networks explicitly listed in the bounty program will be eligible for rewards».",
+    "письмо Олегу от 2026-10-14 — совпадает с постом"
   ],
   "reward_per_cell_usdc": 0.06,
   "networks": [
-    {"name": "algorand"},
-    {"name": "filecoin"},
-    {"name": "avalanche", "from": "2026-10-10", "until": "2026-11-01", "note": "минимум до 01.11, может быть продлена; после 01.11 уточнить у Олега"},
-    {"name": "somnia", "until": "2026-11-01", "note": "засчитывается только для PR, созданных до 01.11"},
-    {"name": "fuse", "from": "2026-11-01"}
+    {
+      "name": "algorand"
+    },
+    {
+      "name": "filecoin"
+    },
+    {
+      "name": "avalanche",
+      "from": "2026-10-10",
+      "until": "2026-11-01",
+      "note": "в посте: from October 10 to November 1st; продление проверять в Discussion #41"
+    },
+    {
+      "name": "somnia",
+      "until": "2026-11-01",
+      "note": "засчитывается только для PR, созданных до 01.11"
+    },
+    {
+      "name": "fuse",
+      "from": "2026-11-01"
+    }
   ],
-  "unconfirmed": {
-    "aptos": "добавлена в Discussion #41 19.12.2025, удаления не видно; не учитываем, пока Олег не подтвердит",
-    "sonic": "добавлена в Discussion #41 19.12.2025, удаления не видно; не учитываем, пока Олег не подтвердит",
-    "ton": "x2 за первые 10 сущностей в категории (09.01.2026), в список сетей явно не внесена",
-    "arbitrum": "x2 до 15.01.2026, статус сети программы не ясен"
+  "how_to_check": "Открыть Discussion #41 (?sort=new) и сверить список сетей в исходном посте и свежие ответы ArseniiPetrovich; при изменении обновить этот файл и журнал реестра.",
+  "not_eligible": {
+    "aptos": "добавлялась 19.12.2025, но сейчас нет в списке поста #41 → не платят",
+    "sonic": "то же, что aptos",
+    "ton": "разовая акция x2 январь 2026, в списке нет",
+    "arbitrum": "x2 до 15.01.2026, в списке нет",
+    "stellar": "убрана с 01.01.2026",
+    "linea": "убрана с 01.01.2026",
+    "cardano": "не ищут (02.02.2026)"
   }
 }
