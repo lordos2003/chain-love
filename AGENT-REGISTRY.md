@@ -3,6 +3,10 @@
 Читать ПЕРВЫМ ДЕЛОМ, до любой работы. Ветка `agent-registry` форка, файл публичный:
 https://raw.githubusercontent.com/lordos2003/chain-love/agent-registry/AGENT-REGISTRY.md
 
+## 0. Главный агент
+
+С 2026-10-19 главный по проекту — сессия Claude Code `session_01EzVCFG42JqmQZQcBAF3i7T` (назначена Олегом). Главный агент ведёт этот реестр, проверяет и при необходимости исправляет ветки всех агентов в форке (с разрешения Олега). Остальные агенты: заявка в реестре до работы, свои ветки, без правок чужих веток.
+
 ## 1. Что считается истиной
 
 1. **Живой git** (истина): ветки форка `lordos2003/chain-love` и PR-рефы upstream `Chain-Love/chain-love`.
@@ -79,19 +83,19 @@ Agent: <имя агента>/<id сессии или запуска>
 
 | Ветка | Head | PR | Статус | Область | Агент / заметка |
 |---|---|---|---|---|---|
-| `add-analytics-tags` | 69ced98 | #4666 | open | analytics offers: колонка tag | агент не указан, 19.10. ПРОВЕРКА 15:40: внутри ещё коммит bridges-тегов (самодубль #4665); 57/63 analytics и 57/60 bridges ячеек уже в чужих PR (#1881, #4515, #4516, #1882...) |
-| `add-apis-tags-1` | 50e2580 | #4661 | open | apis offers: tag (1/4) | агент не указан, 19.10. ПРОВЕРКА 15:40: только tag, пустые ячейки, дублей нет; но GetBlock (11 офферов в 4 ветках) помечены «EVM JSON-RPC» при availableApis Algorand |
-| `add-apis-tags-2` | 14b1488 | #4662 | open | apis offers: tag (2/4) | агент не указан, 19.10 |
+| `add-analytics-tags` | 082c90c | #4666 | open | analytics offers: tag (6 ячеек) | 19.10 15:50 исправлено главным агентом: убран коммит bridges (самодубль #4665) и 57 ячеек, занятых чужими PR; осталось 6 |
+| `add-apis-tags-1` | 50e2580 | #4661 | open | apis offers: tag (1/4) | агент не указан, 19.10. Проверено 15:40: только tag, пустые ячейки, дублей нет |
+| `add-apis-tags-2` | f2cc5fa | #4662 | open | apis offers: tag (2/4) | 19.10 15:50 исправлено главным агентом: у 11 GetBlock убран «EVM JSON-RPC» (у них Algorand API) |
 | `add-apis-tags-3` | 8d78c77 | #4663 | open | apis offers: tag (3/4) | агент не указан, 19.10 |
 | `add-apis-tags-4` | 5406b9a | #4664 | open | apis offers: tag (4/4) | агент не указан, 19.10 |
-| `add-bridges-tags` | bd53b66 | #4665 | open | bridges offers: tag | агент не указан, 19.10. ПРОВЕРКА 15:40: 57/60 ячеек уже в чужих PR (#1882, #1894, #3262) |
+| `add-bridges-tags` | 7b97602 | #4665 | open | bridges offers: tag (3 ячейки) | 19.10 15:50 исправлено главным агентом: 57 ячеек, уже занятых старшими чужими PR (#1882, #1894, #3262…), откачены; осталось 3 |
 | `add-explorer-tags` | 3bc5113 | #4657 | open | explorers offers: tag (55) | агент не указан, 19.10 |
 | `add-forest-filecoin-faucet` | 6f729bf | #4655 | closed | faucets: новая строка ChainSafe Forest (Filecoin) | PR закрыт без слияния; источники и дубли не проверены |
 | `add-oracle-tags` | b968501 | #4656 | open | oracles offers: tag (24) | агент не указан, 19.10 |
-| `add-ramps-tags` | 0e70bab | #4668 | open | ramps offers: tag | агент не указан, 19.10. ПРОВЕРКА 15:40: внутри коммит wallets-тегов (самодубль #4667); 22/61 ramps (#1879, #2456) и 96/103 wallets ячеек уже в чужих PR |
+| `add-ramps-tags` | 5016ee2 | #4668 | open | ramps offers: tag (39 ячеек) | 19.10 15:50 исправлено главным агентом: убран коммит wallets (самодубль #4667) и 22 ячейки, занятые чужими PR (#1879, #2456); осталось 39 |
 | `add-sdk-dependencies` | c4ceea3 | #4262 | closed | sdks.dependencies | PR #4262 закрыт Олегом как дубль; ветка хранится как источник данных, старая база |
 | `add-security-compliance` | cc59266 | #4288 | open | security.compliance, analytics.historicalData (10 ячеек) | #4651 (дубль) закрыт; старая база, сливается; те же 2 ячейки Santiment есть в чужом #4635 |
-| `add-wallets-tags` | 86da425 | #4667 | open | wallets offers: tag | агент не указан, 19.10. ПРОВЕРКА 15:40: 96/103 ячеек уже в чужих PR (#1880, #1899, #1894) |
+| `add-wallets-tags` | 7bfa3c2 | #4667 | open | wallets offers: tag (7 ячеек) | 19.10 15:50 исправлено главным агентом: 96 ячеек, занятых чужими PR (#1880, #1899, #1894…), откачены; осталось 7 |
 | `fill-avalanche-audits` | 56de73f | #4454 | open | wallets.audit, bridges.auditsPerformed, Avalanche (7 ячеек) | наша сессия (Claude); 1 approve, ждёт 2-го |
 | `fill-avalanche-misc` | ab33eed | #4455 | open | sdks.dependencies, mcpservers.mcpEndpoint, explorers.sdk, bridges.monitoringAndAnalytics, apis.queryPrice, Avalanche (35 ячеек) | наша сессия (Claude); нужен re-review; описание PR устарело (там 17 строк/40 ячеек, факт 15/35) |
 | `fill-provider-links-2` | 2e99015 | - | service | пусто, копия main | PR #4266 слит; ветка не нужна, не удалять без Олега |
@@ -107,6 +111,7 @@ Agent: <имя агента>/<id сессии или запуска>
 
 ## 9. Журнал изменений реестра
 
+- 2026-10-19 15:50 МСК: главный агент исправил #4662 (GetBlock), #4665, #4666, #4667, #4668 (дубли со старшими чужими PR и самодубли убраны); валидаторы OK, merge-рефы есть.
 - 2026-10-19 15:40 МСК: проверены 8 веток тегов (#4661–#4668): новых веток после 15:25 нет; заметки о дублях и самодублях в таблице.
 - 2026-10-19 15:35 МСК: добавлены dup_scan.py (общий сканер дублей по ячейкам) и правило трейлера `Agent:`; registry_check.py показывает Agent по веткам. На момент введения ни одна ветка трейлера не имеет (старые коммиты не переписывать).
 - 2026-10-19 15:25 МСК: реестр создан по состоянию git (17 веток форка, upstream main 496fd79). Основание: после инцидента 19.10 несколько агентов работают в одном форке.
