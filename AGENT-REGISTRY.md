@@ -101,7 +101,8 @@ Agent: <имя агента>/<id сессии или запуска>
 | `add-security-compliance` | cc59266 | #4288 | open | security.compliance, analytics.historicalData (10 ячеек) | #4651 (дубль) закрыт; старая база, сливается; те же 2 ячейки Santiment есть в чужом #4635 |
 | `fill-avalanche-audits` | 56de73f | #4454 | open | wallets.audit, bridges.auditsPerformed, Avalanche (7 ячеек) | наша сессия (Claude); 1 approve, ждёт 2-го |
 | `fill-avalanche-misc` | ab33eed | #4455 | open | sdks.dependencies, mcpservers.mcpEndpoint, explorers.sdk, bridges.monitoringAndAnalytics, apis.queryPrice, Avalanche (35 ячеек) | наша сессия (Claude); нужен re-review; описание PR устарело (там 17 строк/40 ячеек, факт 15/35) |
-| `fill-provider-links-2` | 2e99015 | - | service | пусто, копия main | PR #4266 слит; ветка не нужна, не удалять без Олега |
+| `fill-oracles-cells` | 7efcc87 | - | hold | oracles offers pyth-pro: availableApis, monitoringAndAnalytics, additionalFeatures, dataTypes, sdk (5 ячеек); источники docs.pyth.network/price-feeds/pro, llms-price-feeds-pro.txt, frontend-auth, npm @pythnetwork/pyth-lazer-sdk | ZCode (заявка 18:06); 19.10 18:45 главный агент: убраны неподтверждённые FX и описание Pyth Terminal, снята scry-protocol.availableApis (фраза из текста, не API); валидаторы OK; ВЕС 0: pyth-pro только в Cardano/Stellar, не оплачивается, PR не открывать (решение Олега 18:38) |
+| `fill-provider-links-2` | 2e99015 | - | service | пусто, копия main | PR #4266 слит; ветка не нужна, не удалять без Олега; registry_check показывает #4638x: это чужой закрытый PR (aziemels-byte), чья голова совпала с коммитом main 2e99015, к нам отношения не имеет |
 | `fill-wallet-audits` | fb5b7d4 | #4267 | open | wallets.audit + LI.FI audit (6 ячеек) | наша сессия (Claude); 1 approve, ждёт eugene17kotov |
 
 Служебные ветки, не в таблице: `main` (fork main на 2e99015, отстаёт от upstream 08db5d9; не обновляем без Олега), `agent-registry` (этот файл и скрипты).
@@ -110,10 +111,11 @@ Agent: <имя агента>/<id сессии или запуска>
 
 | Ветка | Область (файл.колонка, сеть) | Агент / сессия | Заявлено (МСК) | Статус |
 |---|---|---|---|---|
-| `fill-oracles-cells` | 7efcc87 | - | hold | oracles offers pyth-pro: availableApis, monitoringAndAnalytics, additionalFeatures, dataTypes, sdk (5 ячеек); источники docs.pyth.network/price-feeds/pro, llms-price-feeds-pro.txt, frontend-auth, npm @pythnetwork/pyth-lazer-sdk | ZCode (заявка 18:06); 19.10 18:45 главный агент: убраны неподтверждённые FX и описание Pyth Terminal, снята scry-protocol.availableApis (фраза из текста, не API); валидаторы OK; ВЕС 0: pyth-pro только в Cardano/Stellar, не оплачивается, PR не открывать (решение Олега 18:38) |
+| (пусто) | | | | |
 
 ## 9. Журнал изменений реестра
 
+- 2026-10-21 09:00 МСК (главный агент): плановая сверка — расхождений нет; строка fill-oracles-cells перенесена из «Заявок» (§8) в таблицу веток (§7), убран дубль заголовка §9, пояснение про #4638x у fill-provider-links-2.
 - 2026-10-19 19:10 МСК (главный агент): сети сверены с исходным постом Discussion #41: Algorand, Filecoin, Somnia (до 01.11), Fuse (с 01.11), Avalanche (10.10–01.11). Aptos, Sonic, TON, Arbitrum в списке нет → не платят (PROGRAM.json not_eligible).
 - 2026-10-19 19:05 МСК (главный агент): сети программы вынесены в PROGRAM.json (меняются по датам); скрипты читают его и предупреждают об устаревании; правило 4в переписано (проверять каждый раз). Aptos, Sonic, TON, Arbitrum — в unconfirmed до ответа Олега.
 - 2026-10-19 18:55 МСК (главный агент): правило 4в (только офферы с листингами в сетях программы, вес > 0); dup_scan.py --free считает вес и сумму, скрывает вес 0. fill-oracles-cells: pyth-pro есть только в Cardano/Stellar, вес 0, PR не открывать.
