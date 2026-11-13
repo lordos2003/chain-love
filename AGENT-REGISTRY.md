@@ -90,7 +90,7 @@ Agent: <имя агента>/<id сессии или запуска>
 - Интерактивные сессии с `add_repo lordos2003/chain-love access:push` могут обновлять реестр.
 - К upstream писать нельзя ни одной сессии (комментарии/описания PR делает Олег).
 
-## 7. Ветки форка (снимок 2026-10-19 17:42 МСК: ветки тегов удалены Олегом; upstream main 08db5d9, форк main 2e99015)
+## 7. Ветки форка (снимок 2026-11-13; upstream main 72ebf21, форк main 2e99015; ветки тегов удалены Олегом 19.10)
 
 Колонки: ветка | head | PR | статус | область | агент / заметка. Статусы: `claimed`, `ready`, `open`, `merged`, `closed`, `withdrawn` (ветка пустая, PR ждёт закрытия), `hold` (не открывать PR), `service`.
 
@@ -99,13 +99,14 @@ Agent: <имя агента>/<id сессии или запуска>
 | `add-forest-filecoin-faucet` | 6f729bf | #4655 | closed | faucets: новая строка ChainSafe Forest (Filecoin) | PR закрыт без слияния; источники и дубли не проверены |
 | `add-sdk-dependencies` | c4ceea3 | #4262 | closed | sdks.dependencies | PR #4262 закрыт Олегом как дубль; ветка хранится как источник данных, старая база |
 | `add-security-compliance` | bad70d4 | #4288 | merged | security.compliance, analytics.historicalData (10 ячеек) | слит 12.11.2026 (Adisaok); #4651 (дубль) закрыт; те же 2 ячейки Santiment были в чужом #4635 |
+| `feat/oracles-pyth-pro` | be1f31c | #5061 | merged | oracles offers pyth-pro: availableApis, monitoringAndAnalytics, additionalFeatures, dataTypes, sdk (5 ячеек) | слит 03.11.2026; 2 approve (USS-Supervisor, Adisaok); добавлена по сверке 13.11 — в git есть, в таблице не числилась; те же ячейки pyth-pro есть и в fill-oracles-cells (hold) |
 | `fill-avalanche-audits` | 1cd6dd5 | #4454 | merged | wallets.audit, bridges.auditsPerformed, Avalanche (7 ячеек) | слит 07.11.2026; 2 approve (USS-Supervisor, harunsulaiman) |
 | `fill-avalanche-misc` | 3757c5d | #4455 | open | mcpservers.mcpEndpoint, bridges.monitoringAndAnalytics, apis.queryPrice, sdks.dependencies (dappkit), Avalanche | наша сессия (Claude); ждёт re-review после ревью 09.11; оба пункта (dex-guru sdk, dappkit dependencies) сняты в 3757c5d; описание PR устарело (4 файла/14 строк, в описании 5 файлов/15 строк) |
 | `fill-oracles-cells` | 7efcc87 | - | hold | oracles offers pyth-pro: availableApis, monitoringAndAnalytics, additionalFeatures, dataTypes, sdk (5 ячеек); источники docs.pyth.network/price-feeds/pro, llms-price-feeds-pro.txt, frontend-auth, npm @pythnetwork/pyth-lazer-sdk | ZCode (заявка 18:06); 19.10 18:45 главный агент: убраны неподтверждённые FX и описание Pyth Terminal, снята scry-protocol.availableApis (фраза из текста, не API); валидаторы OK; ВЕС 0: pyth-pro только в Cardano/Stellar, не оплачивается, PR не открывать (решение Олега 18:38) |
 | `fill-provider-links-2` | 2e99015 | - | service | пусто, копия main | PR #4266 слит; ветка не нужна, не удалять без Олега; registry_check показывает #4638x: это чужой закрытый PR (aziemels-byte), чья голова совпала с коммитом main 2e99015, к нам отношения не имеет |
 | `fill-wallet-audits` | b5c414e | #4267 | merged | wallets.audit + LI.FI audit (6 ячеек) | слит 11.11.2026 (Adisaok); 2 approve (USS-Supervisor, Adisaok) |
 
-Служебные ветки, не в таблице: `main` (fork main на 2e99015, отстаёт от upstream 08db5d9; не обновляем без Олега), `agent-registry` (этот файл и скрипты).
+Служебные ветки, не в таблице: `main` (fork main на 2e99015, отстаёт от upstream 72ebf21; обновление 13.11 заблокировано токеном без scope `workflow` — в upstream main есть изменения .github/workflows; для синка нужен `gh auth refresh -s workflow` либо токен со scope workflow), `agent-registry` (этот файл и скрипты).
 
 ## 8. Заявки (в работе, ветки ещё нет или не запушена)
 
@@ -115,6 +116,7 @@ Agent: <имя агента>/<id сессии или запуска>
 
 ## 9. Журнал изменений реестра
 
+- 2026-11-13 (главный агент): сверка по registry_check.py. Расхождение устранено: добавлена ветка `feat/oracles-pyth-pro` (head be1f31c, #5061 merged 03.11, 2 approve) — была в git, не числилась в таблице; отмечено совпадение ячеек pyth-pro с fill-oracles-cells (hold). Обновлён заголовок §7 (upstream main 72ebf21, форк main 2e99015). Обновление `main` форка до upstream 13.11 заблокировано: в upstream main есть изменения .github/workflows, токен не имеет scope `workflow` (нужен `gh auth refresh -s workflow` либо токен со scope workflow); PR-ветки re-базируются на upstream main напрямую, на работу не влияет.
 - 2026-11-13 (главный агент): проверены по API все PR lordos2003. Обновлены статусы: #4288 → merged (12.11, Adisaok), #4267 → merged (11.11, Adisaok), #4454 → merged (07.11), #4266/#4264 → merged (18.10), #3893 → merged (21.09), #5061 → merged (03.11). Открыт только #4455 (head 3757c5d): ждёт re-review после ревью 09.11, оба пункта (dex-guru sdk, dappkit dependencies) сняты в 3757c5d, повторного ревью ещё нет; описание PR устарело. Закрыты без слияния: #4651 (дубль), #4655 (дубль #4638), #4656/#4657/#4661–#4668 (теги отозваны), #4262/#4263 (дубли). Итог: 7 слито, 1 ждёт, 14 закрыто.
 - 2026-10-21 09:00 МСК (главный агент): плановая сверка — расхождений нет; строка fill-oracles-cells перенесена из «Заявок» (§8) в таблицу веток (§7), убран дубль заголовка §9, пояснение про #4638x у fill-provider-links-2.
 - 2026-10-19 19:10 МСК (главный агент): сети сверены с исходным постом Discussion #41: Algorand, Filecoin, Somnia (до 01.11), Fuse (с 01.11), Avalanche (10.10–01.11). Aptos, Sonic, TON, Arbitrum в списке нет → не платят (PROGRAM.json not_eligible).
