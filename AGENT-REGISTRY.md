@@ -79,7 +79,7 @@ Agent: <имя агента>/<id сессии или запуска>
 ## 5. Запрещено без явного разрешения Олега в текущем чате
 
 - закрывать, переоткрывать, редактировать чужие PR и комментировать их;
-- открывать PR (PR открывает Олег);
+- открывать PR (с 2026-11-24 по решению Олега PR от имени `lordos2003` открывает агент, открывший ветку; в описании указывать адрес выплат, трейлер `Agent:` в коммите обязателен; чужие ветки не трогать);
 - force-push, удаление, переименование чужих веток;
 - менять `main` форка и ветку `agent-registry` не по правилам этого файла;
 - действовать от имени Олега, если задача не его прямая просьба (инцидент 19.10: сторонний агент закрыл/пересоздал PR и ветки).
@@ -103,6 +103,7 @@ Agent: <имя агента>/<id сессии или запуска>
 | `fill-avalanche-audits` | 1cd6dd5 | #4454 | merged | wallets.audit, bridges.auditsPerformed, Avalanche (7 ячеек) | слит 07.11.2026; 2 approve (USS-Supervisor, harunsulaiman) |
 | `fill-avalanche-misc` | 3757c5d | #4455 | open | mcpservers.mcpEndpoint, bridges.monitoringAndAnalytics, apis.queryPrice, sdks.dependencies (dappkit), Avalanche | наша сессия (Claude); ждёт re-review после ревью 09.11; оба пункта (dex-guru sdk, dappkit dependencies) сняты в 3757c5d; описание PR устарело (4 файла/14 строк, в описании 5 файлов/15 строк) |
 | `fill-oracles-cells` | 7efcc87 | - | hold | oracles offers pyth-pro: availableApis, monitoringAndAnalytics, additionalFeatures, dataTypes, sdk (5 ячеек); источники docs.pyth.network/price-feeds/pro, llms-price-feeds-pro.txt, frontend-auth, npm @pythnetwork/pyth-lazer-sdk | ZCode (заявка 18:06); 19.10 18:45 главный агент: убраны неподтверждённые FX и описание Pyth Terminal, снята scry-protocol.availableApis (фраза из текста, не API); валидаторы OK; ВЕС 0: pyth-pro только в Cardano/Stellar, не оплачивается, PR не открывать (решение Олега 18:38) |
+| `fill-platforms-available-apis` | e8df3cd | - | open | platforms.availableApis: privy, sequence, tenderly, pimlico, portal-enterprise, venly-premium, cometh, orderly (8 офферов × 3 сети = 24 ячейки) | наша сессия (opencode/cli); источники официальные API-референсы; валидаторы OK; dup_scan свободно; PR открывает агент по решению Олега 24.11 |
 | `fill-provider-links-2` | 2e99015 | - | service | пусто, копия main | PR #4266 слит; ветка не нужна, не удалять без Олега; registry_check показывает #4638x: это чужой закрытый PR (aziemels-byte), чья голова совпала с коммитом main 2e99015, к нам отношения не имеет |
 | `fill-wallet-audits` | b5c414e | #4267 | merged | wallets.audit + LI.FI audit (6 ячеек) | слит 11.11.2026 (Adisaok); 2 approve (USS-Supervisor, Adisaok) |
 
@@ -116,6 +117,7 @@ Agent: <имя агента>/<id сессии или запуска>
 
 ## 9. Журнал изменений реестра
 
+- 2026-11-24 (эта сессия, opencode/cli): по решению Олега «меняем правила» агент теперь открывает PR. Поправлено правило §5 и добавлена ветка `fill-platforms-available-apis` (e8df3cd, open): platforms.availableApis, 8 офферов (privy, sequence, tenderly, pimlico, portal-enterprise, venly-premium, cometh, orderly) × 3 сети программы = 24 ячейки. Источники — официальные API-референсы. Валидаторы OK, dup_scan свободно.
 - 2026-11-13 (главный агент): fork `main` синхронизирован с upstream — `72ebf21` (= upstream main) после добавления scope `workflow` (`gh auth refresh -s workflow`). Ранее синк был заблокирован из-за изменений .github/workflows в upstream.
 - 2026-11-13 (главный агент): сверка по registry_check.py. Расхождение устранено: добавлена ветка `feat/oracles-pyth-pro` (head be1f31c, #5061 merged 03.11, 2 approve) — была в git, не числилась в таблице; отмечено совпадение ячеек pyth-pro с fill-oracles-cells (hold). Обновлён заголовок §7 (upstream main 72ebf21, форк main 2e99015). Обновление `main` форка до upstream 13.11 заблокировано: в upstream main есть изменения .github/workflows, токен не имеет scope `workflow` (нужен `gh auth refresh -s workflow` либо токен со scope workflow); PR-ветки re-базируются на upstream main напрямую, на работу не влияет.
 - 2026-11-13 (главный агент): проверены по API все PR lordos2003. Обновлены статусы: #4288 → merged (12.11, Adisaok), #4267 → merged (11.11, Adisaok), #4454 → merged (07.11), #4266/#4264 → merged (18.10), #3893 → merged (21.09), #5061 → merged (03.11). Открыт только #4455 (head 3757c5d): ждёт re-review после ревью 09.11, оба пункта (dex-guru sdk, dappkit dependencies) сняты в 3757c5d, повторного ревью ещё нет; описание PR устарело. Закрыты без слияния: #4651 (дубль), #4655 (дубль #4638), #4656/#4657/#4661–#4668 (теги отозваны), #4262/#4263 (дубли). Итог: 7 слито, 1 ждёт, 14 закрыто.
